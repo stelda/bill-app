@@ -49,7 +49,9 @@ export default ({ data: bills, loading, error }) => {
   }
 
   // Fix Bug #1 - Sort bills by date
+  if (Array.isArray(bills)) {
   bills.sort((a, b) => new Date(b.date) - new Date(a.date));
+  }
 
   return (`
     <div class='layout'>
