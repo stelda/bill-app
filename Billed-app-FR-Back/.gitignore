@@ -1,0 +1,11 @@
+# Node.js
+node_modules
+
+# Tests logs
+coverage
+
+# Editor directories
+/.idea/
+
+# Database
+database_dev.sqlite
