@@ -47,7 +47,10 @@ export default ({ data: bills, loading, error }) => {
   } else if (error) {
     return ErrorPage(error)
   }
-  
+
+  // Fix Bug #1 - Sort bills by date
+  bills.sort((a, b) => new Date(b.date) - new Date(a.date));
+
   return (`
     <div class='layout'>
       ${VerticalLayout(120)}
