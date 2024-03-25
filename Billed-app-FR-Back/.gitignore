@@ -9,3 +9,5 @@ coverage
 
 # Database
 database_dev.sqlite
+database_test.sqlite
+/public/
