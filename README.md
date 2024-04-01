@@ -6,7 +6,7 @@ This project, initiated as part of a software developer training program, is foc
 
 1. Go to the project directory : `cd Billed-app-FR-Back`
 2. Install project dependancies : `npm install`
-3. Run the API : `npm run:dev`
+3. Run the API : `npm run run:dev`
 4. Access  : `http://localhost:5678`
 
 ### Launch Frontend:
@@ -17,13 +17,14 @@ This project, initiated as part of a software developer training program, is foc
 4. Launch app  : `live-server`
 5. Access : `http://127.0.0.1:8080/`
 
-### Tests:
+### Frontend Tests:
 
-1. Run all tests : `npm run test`
-2. Run one test :
+1. Go to the project directory : `cd Billed-app-FR-Front`
+2. Run all tests : `npm run test`
+3. Run one test :
     1. install jest-cli: `npm i --save-dev jest-cli`
     2. launch test: `jest src/__tests__/your_test_file.js`
-3. Access : `http://127.0.0.1:8080/coverage/lcov-report/`
+4. Access : `http://127.0.0.1:8080/coverage/lcov-report/`
 
 ### Backend Credentials
 ```
