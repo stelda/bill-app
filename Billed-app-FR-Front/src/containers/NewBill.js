@@ -26,7 +26,7 @@ export default class NewBill {
     // Fix Bug #3 - Check file extension
     // prevent the file from being uploaded unless it has a jpg, jpeg or png extension
     if (!['jpg', 'jpeg', 'png'].includes(fileName.split('.').pop())) {
-        alert('Le fichier doit être au format jpg, jpeg ou png')
+        // alert('Le fichier doit être au format jpg, jpeg ou png')
         e.target.value = ''
         return
     }
