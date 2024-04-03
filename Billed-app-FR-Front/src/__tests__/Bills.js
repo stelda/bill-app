@@ -14,7 +14,7 @@ import userEvent from "@testing-library/user-event";
 import {formatDate} from "../app/format.js";
 
 import Bills from "../containers/Bills.js";
-import {mockStore} from "../__mocks__/store.js";
+import mockStore from "../__mocks__/store.js";
 
 describe("Given I am connected as an employee", () => {
   describe("When I am on Bills Page", () => {
@@ -168,7 +168,11 @@ describe("Given I am connected as an employee", () => {
 
   describe("When an error occurs on API", () => {
     beforeEach(() => {
-      jest.spyOn(mockStore, "bills")
+      // initialize mockSTore
+      jest.spyOn(mockStore, "bills").mockReturnValue({
+        list: () => Promise.resolve([])
+      });
+
       Object.defineProperty(
           window,
           'localStorage',
@@ -183,7 +187,7 @@ describe("Given I am connected as an employee", () => {
       document.body.appendChild(root)
       router()
     })
-    test(" then fetches bills from an API and fails with 404 message error", async () => {
+    test("then fetches bills from an API and fails with 404 message error", async () => {
       mockStore.bills.mockImplementationOnce(() => {
         return {
           list: () => {
@@ -208,6 +212,9 @@ describe("Given I am connected as an employee", () => {
       await new Promise(process.nextTick);
       const message = await screen.getByText(/Erreur 500/)
       expect(message).toBeTruthy()
+    })
+    afterEach(() => {
+      jest.resetAllMocks()
     })
   })
 })
