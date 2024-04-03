@@ -196,7 +196,7 @@ describe("Given I am connected as an employee", () => {
       const message = await screen.getByText(/Erreur 404/)
       expect(message).toBeTruthy()
     })
-    test("fetches messages from an API and fails with 500 message error", async () => {
+    test("then fetches messages from an API and fails with 500 message error", async () => {
       mockStore.bills.mockImplementationOnce(() => {
         return {
           list: () => {
