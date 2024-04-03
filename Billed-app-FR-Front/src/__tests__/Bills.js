@@ -11,7 +11,7 @@ import {localStorageMock} from "../__mocks__/localStorage.js";
 import router from "../app/Router.js";
 import userEvent from "@testing-library/user-event";
 
-import {formatDate, formatStatus} from "../app/format.js";
+import {formatDate} from "../app/format.js";
 
 import Bills from "../containers/Bills.js";
 import {mockStore} from "../__mocks__/store.js";
