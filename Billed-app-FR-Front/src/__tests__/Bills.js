@@ -44,6 +44,12 @@ describe("Given I am connected as an employee", () => {
       const datesSorted = [...dates].sort(antiChrono)
       expect(dates).toEqual(datesSorted)
     })
+
+    // test to check if the new bill button is displayed
+    test("Then should display the new bill button", () => {
+      expect(screen.getByText("Mes notes de frais")).toBeTruthy()
+      expect(screen.getByTestId("btn-new-bill")).toBeTruthy()
+    })
   })
 
   // test for new bill button
