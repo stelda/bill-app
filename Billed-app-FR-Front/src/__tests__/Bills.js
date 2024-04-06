@@ -143,6 +143,19 @@ describe("Given I am connected as an employee", () => {
       // check if the table exists
       const table = screen.getByTestId("tbody")
       expect(table).toBeTruthy()
+      // check if the table has header content
+      const headerContentColumn1  = await screen.getByText("Type")
+      expect(headerContentColumn1).toBeTruthy()
+      const headerContentColumn2  = await screen.getByText("Nom")
+      expect(headerContentColumn2).toBeTruthy()
+      const headerContentColumn3  = await screen.getByText("Date")
+      expect(headerContentColumn3).toBeTruthy()
+      const headerContentColumn4  = await screen.getByText("Montant")
+      expect(headerContentColumn4).toBeTruthy()
+      const headerContentColumn5  = await screen.getByText("Statut")
+      expect(headerContentColumn5).toBeTruthy()
+      const headerContentColumn6  = await screen.getByText("Actions")
+      expect(headerContentColumn6).toBeTruthy()
     })
 
     test("then bills should have a correct date", async () => {
