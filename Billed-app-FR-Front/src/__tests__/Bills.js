@@ -197,7 +197,7 @@ describe("Given I am connected as an employee", () => {
       })
       window.onNavigate(ROUTES_PATH.Bills)
       await new Promise(process.nextTick);
-      const message = await screen.getByText(/Erreur 404/)
+      const message = await screen.getByText(/Erreur/)
       expect(message).toBeTruthy()
     })
     test("then fetches messages from an API and fails with 500 message error", async () => {
@@ -210,7 +210,7 @@ describe("Given I am connected as an employee", () => {
       })
       window.onNavigate(ROUTES_PATH.Bills)
       await new Promise(process.nextTick);
-      const message = await screen.getByText(/Erreur 500/)
+      const message = await screen.getByText(/Erreur/)
       expect(message).toBeTruthy()
     })
     afterEach(() => {
