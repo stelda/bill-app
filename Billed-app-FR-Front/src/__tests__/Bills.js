@@ -3,16 +3,14 @@
  */
 
 import {screen, waitFor} from "@testing-library/dom"
+import '@testing-library/jest-dom'
 import BillsUI from "../views/BillsUI.js"
 import { bills } from "../fixtures/bills.js"
 import { ROUTES_PATH} from "../constants/routes.js";
 import {localStorageMock} from "../__mocks__/localStorage.js";
-
 import router from "../app/Router.js";
 import userEvent from "@testing-library/user-event";
-
-import {formatDate} from "../app/format.js";
-
+import {formatDate, formatStatus} from "../app/format.js";
 import Bills from "../containers/Bills.js";
 import mockStore from "../__mocks__/store.js";
 
@@ -33,8 +31,8 @@ describe("Given I am connected as an employee", () => {
       // Check if the bill icon is highlighted
       await waitFor(() => screen.getByTestId('icon-window'))
       const windowIcon = screen.getByTestId('icon-window')
-      // to-do write expect expression
-      expect(windowIcon.classList).toContain('active-icon');
+      // Fix Bug #5 - complete expect statement
+      expect(windowIcon).toHaveClass('active-icon');
     })
 
     test("Then bills should be ordered from earliest to latest", () => {
@@ -125,8 +123,10 @@ describe("Given I am connected as an employee", () => {
       })
 
       // check if html element whose id is "modaleFile" has a attribute display set to block
+      await waitFor(() => {
         const modal = screen.getByTestId('modaleFile')
-        expect(modal).toBeTruthy()
+        expect(modal).toHaveStyle("display: block")
+      })
     })
   })
 })
@@ -165,9 +165,9 @@ describe("Given I am connected as an employee", () => {
       bills.forEach(bill => {
         const formattedDate = formatDate(bill.date)
         // check if there is a date
-          expect(formattedDate).toBeTruthy()
-          // check if the date is in the correct format
-          expect(formattedDate).toMatch(expectedDateRegex)
+        expect(formattedDate).toBeTruthy()
+        // check if the date is in the correct format
+        expect(formattedDate).toMatch(expectedDateRegex)
       })
     })
 
@@ -183,6 +183,31 @@ describe("Given I am connected as an employee", () => {
         expect(status).toMatch(expectedStatus)
       })
     })
+  });
+
+  describe("When I have bills to display", () => {
+    beforeEach(() => {
+      jest.spyOn(mockStore, "bills").mockImplementation(() => {
+        return {
+          list: () => Promise.resolve(bills)
+        }
+      });
+    });
+
+    test("Then it should fetch the bills from mock API GET", async () => {
+      const billsInstance = new Bills({
+        document,
+        onNavigate,
+        store: mockStore,
+        localStorage: window.localStorage,
+      });
+      const result = await billsInstance.getBills();
+      expect(result).toEqual(bills.map(doc => ({
+        ...doc,
+        date: formatDate(doc.date),
+        status: formatStatus(doc.status)
+      })));
+    });
   });
 
   describe("When an error occurs on API", () => {
