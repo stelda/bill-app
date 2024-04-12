@@ -16,7 +16,14 @@ import mockStore from "../__mocks__/store.js";
 
 describe("Given I am connected as an employee", () => {
   describe("When I am on Bills Page", () => {
-    test("Then bill icon in vertical layout should be highlighted", async () => {
+
+    test("then fetches bills from fixtures", async () => {
+      document.body.innerHTML = BillsUI({data: bills})
+      expect(bills.length).toBeGreaterThan(0)
+    })
+
+    /*========================= INITIAL UI Checks on the Bills Page =========================*/
+    test("then bill icon in vertical layout should be highlighted", async () => {
       // Set up authentification
       Object.defineProperty(window, 'localStorage', {value: localStorageMock})
       window.localStorage.setItem('user', JSON.stringify({
@@ -35,7 +42,7 @@ describe("Given I am connected as an employee", () => {
       expect(windowIcon).toHaveClass('active-icon');
     })
 
-    test("Then bills should be ordered from earliest to latest", () => {
+    test("then bills should be ordered from earliest to latest", () => {
       document.body.innerHTML = BillsUI({data: bills})
       const dates = screen.getAllByText(/^(19|20)\d\d[- /.](0[1-9]|1[012])[- /.](0[1-9]|[12][0-9]|3[01])$/i).map(a => a.innerHTML)
       const antiChrono = (a, b) => ((a < b) ? 1 : -1)
@@ -44,15 +51,36 @@ describe("Given I am connected as an employee", () => {
     })
 
     // test to check if the new bill button is displayed
-    test("Then should display the new bill button", () => {
+    test("then the new bill button should be displayed", () => {
       expect(screen.getByText("Mes notes de frais")).toBeTruthy()
       expect(screen.getByTestId("btn-new-bill")).toBeTruthy()
     })
+
+    // test to check if a table is displayed
+    test("then the bills should be displayed", async () => {
+      // check if the table exists
+      const table = screen.getByTestId("tbody")
+      expect(table).toBeTruthy()
+      // check if the table has header content
+      const headerContentColumn1  = await screen.getByText("Type")
+      expect(headerContentColumn1).toBeTruthy()
+      const headerContentColumn2  = await screen.getByText("Nom")
+      expect(headerContentColumn2).toBeTruthy()
+      const headerContentColumn3  = await screen.getByText("Date")
+      expect(headerContentColumn3).toBeTruthy()
+      const headerContentColumn4  = await screen.getByText("Montant")
+      expect(headerContentColumn4).toBeTruthy()
+      const headerContentColumn5  = await screen.getByText("Statut")
+      expect(headerContentColumn5).toBeTruthy()
+      const headerContentColumn6  = await screen.getByText("Actions")
+      expect(headerContentColumn6).toBeTruthy()
+    })
   })
 
-  // test for new bill button
+  /*========================= USER INTERACTIONS WITH THE BILLS PAGE =========================*/
+  // click on new bill button
   describe("When I click on New Bill button", () => {
-    test("Then it should navigate and display the new bill form", async () => {
+    test("then it should navigate and display the new bill form", async () => {
       // Set up authentification
       Object.defineProperty(window, 'localStorage', {value: localStorageMock})
       window.localStorage.setItem('user', JSON.stringify({
@@ -76,9 +104,9 @@ describe("Given I am connected as an employee", () => {
     })
   })
 
-  //test for eye icon
+  // click on eye icon
   describe("When I click on the eye icon", () => {
-    test("Then a modal should open", async () => {
+    test("then a modal should open", async () => {
       // Set up authentification
       Object.defineProperty(window, 'localStorage', {value: localStorageMock})
       window.localStorage.setItem('user', JSON.stringify({
@@ -122,7 +150,7 @@ describe("Given I am connected as an employee", () => {
         expect(screen.getByText('Justificatif')).toBeTruthy()
       })
 
-      // check if html element whose id is "modaleFile" has a attribute display set to block
+      // check if html element whose id is "modaleFile" has an attribute display set to block
       await waitFor(() => {
         const modal = screen.getByTestId('modaleFile')
         expect(modal).toHaveStyle("display: block")
@@ -131,32 +159,31 @@ describe("Given I am connected as an employee", () => {
   })
 })
 
-// integration test GET
-describe("Given I am connected as an employee", () => {
-  describe("When I am on Bills Page", () => {
-    test("then fetches bills from fixtures", async () => {
-      document.body.innerHTML = BillsUI({data: bills})
-      expect(bills.length).toBeGreaterThan(0)
+/*========================= INTEGRATION TEST =========================*/
+describe("Given I am connected as an employee on Bills page", () => {
+  describe("When I have bills to display", () => {
+    beforeEach(() => {
+      jest.spyOn(mockStore, "bills").mockImplementation(() => {
+        return {
+          list: () => Promise.resolve(bills)
+        }
+      });
     })
 
-    test("then the bills should be displayed", async () => {
-      // check if the table exists
-      const table = screen.getByTestId("tbody")
-      expect(table).toBeTruthy()
-      // check if the table has header content
-      const headerContentColumn1  = await screen.getByText("Type")
-      expect(headerContentColumn1).toBeTruthy()
-      const headerContentColumn2  = await screen.getByText("Nom")
-      expect(headerContentColumn2).toBeTruthy()
-      const headerContentColumn3  = await screen.getByText("Date")
-      expect(headerContentColumn3).toBeTruthy()
-      const headerContentColumn4  = await screen.getByText("Montant")
-      expect(headerContentColumn4).toBeTruthy()
-      const headerContentColumn5  = await screen.getByText("Statut")
-      expect(headerContentColumn5).toBeTruthy()
-      const headerContentColumn6  = await screen.getByText("Actions")
-      expect(headerContentColumn6).toBeTruthy()
-    })
+    test("then it should fetch the bills from mock API GET", async () => {
+      const billsInstance = new Bills({
+        document,
+        onNavigate,
+        store: mockStore,
+        localStorage: window.localStorage,
+      });
+      const result = await billsInstance.getBills();
+      expect(result).toEqual(bills.map(doc => ({
+        ...doc,
+        date: formatDate(doc.date),
+        status: formatStatus(doc.status)
+      })));
+    });
 
     test("then bills should have a correct date", async () => {
       // regex for date format "4 Avr. 04"
@@ -183,31 +210,6 @@ describe("Given I am connected as an employee", () => {
         expect(status).toMatch(expectedStatus)
       })
     })
-  });
-
-  describe("When I have bills to display", () => {
-    beforeEach(() => {
-      jest.spyOn(mockStore, "bills").mockImplementation(() => {
-        return {
-          list: () => Promise.resolve(bills)
-        }
-      });
-    });
-
-    test("Then it should fetch the bills from mock API GET", async () => {
-      const billsInstance = new Bills({
-        document,
-        onNavigate,
-        store: mockStore,
-        localStorage: window.localStorage,
-      });
-      const result = await billsInstance.getBills();
-      expect(result).toEqual(bills.map(doc => ({
-        ...doc,
-        date: formatDate(doc.date),
-        status: formatStatus(doc.status)
-      })));
-    });
   });
 
   describe("When an error occurs on API", () => {
