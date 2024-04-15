@@ -5,14 +5,14 @@ This project, initiated as part of a software developer training program, is foc
 ### Launch Backend:
 
 1. Go to the project directory : `cd Billed-app-FR-Back`
-2. Install project dependancies : `npm install`
+2. Install project dependencies : `npm install`
 3. Run the API : `npm run run:dev`
 4. Access  : `http://localhost:5678`
 
 ### Launch Frontend:
 
 1. Go to the project directory : `cd Billed-app-FR-Front`
-2. Install project dependancies : `npm install`
+2. Install project dependencies : `npm install`
 3. Install live-server : `npm install -g live-server`
 4. Launch app  : `live-server`
 5. Access : `http://127.0.0.1:8080/`
