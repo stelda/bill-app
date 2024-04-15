@@ -3,13 +3,14 @@ import ErrorPage from "./ErrorPage.js"
 import LoadingPage from "./LoadingPage.js"
 
 import Actions from './Actions.js'
+import {convertDateToISO} from "../app/format.js";
 
 const row = (bill) => {
   return (`
     <tr>
       <td>${bill.type}</td>
       <td>${bill.name}</td>
-      <td>${bill.date}</td>
+      <td>${bill.originalDate}</td>
       <td>${bill.amount} €</td>
       <td>${bill.status}</td>
       <td>
@@ -23,7 +24,7 @@ const rows = (data) => {
   return (data && data.length) ? data.map(bill => row(bill)).join("") : ""
 }
 
-export default ({ data: bills, loading, error }) => {
+export default ({ data: bills = [], loading, error }) => {
   
   const modal = () => (`
     <div class="modal fade" data-testid="modaleFile" id="modaleFile" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
@@ -49,9 +50,16 @@ export default ({ data: bills, loading, error }) => {
   }
 
   // Fix Bug #1 - Sort bills by date
-  if (Array.isArray(bills)) {
+  // Convert dates to ISO for sorting, but keep original dates for display
+  bills.forEach(bill => {
+    const isoFormat = /^\d{4}-\d{2}-\d{2}$/;
+    bill.originalDate = bill.date;
+
+    if (!isoFormat.test(bill.date)) {
+        bill.date = convertDateToISO(bill.date);
+    }
+  })
   bills.sort((a, b) => new Date(b.date) - new Date(a.date));
-  }
 
   return (`
     <div class='layout'>
